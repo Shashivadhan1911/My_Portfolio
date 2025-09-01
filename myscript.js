@@ -136,12 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(formData)
       });
 
-      alert("✅ Thank you for your message! I will get back to you soon.");
+      showNotification("✅ Thank you for your message! I will get back to you soon.");
       contactForm.reset();
 
     } catch (err) {
       console.error("Form submit error:", err);
-      alert("❌ Error sending message. Please try again.");
+      showNotification("❌ Error sending message. Please try again.");
+        contactForm.reset();
     }
   });
 });
@@ -314,4 +315,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
     typeWriter();
 });
+
 
