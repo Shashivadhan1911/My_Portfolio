@@ -112,20 +112,39 @@ filterButtons.forEach(button => {
 });
 
 // Form submission
-const contactForm = document.getElementById('contact-form');
 
-contactForm.addEventListener('submit', (e) => {
+document.addEventListener('DOMContentLoaded', () => {
+  const contactForm = document.getElementById('contact-form');
+
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    // Here you would normally handle form submission to a server
-    // Get form data
-    const formData = new FormData(contactForm);
-    const formObject = Object.fromEntries(formData);
-    
-    // Simulate form submission
-    showNotification('Thank you for your message! I will get back to you soon.', 'success');
-    contactForm.reset();
-});
 
+    const formData = Object.fromEntries(new FormData(contactForm));
+    // Honeypot check
+    if (formData.honeypot) {
+      alert("Spam detected.");
+      return;
+    }
+
+    try {
+      // NOTE: 'no-cors' is used commonly for Apps Script web apps to avoid CORS issues.
+      // The response will be opaque, so we assume success if fetch doesn't throw.
+      await fetch("https://script.google.com/macros/s/AKfycbxb6QCyzhWddlaHLukoAli1wwlaJ0uYB8qB6sT4PgQW3BkVotMPFZRFMKWOXHc-f5xeQw/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      alert("✅ Thank you for your message! I will get back to you soon.");
+      contactForm.reset();
+
+    } catch (err) {
+      console.error("Form submit error:", err);
+      alert("❌ Error sending message. Please try again.");
+    }
+  });
+});
 // Resume Download Functionality
 const downloadResume = document.getElementById('download-resume');
         
@@ -295,3 +314,4 @@ window.addEventListener('DOMContentLoaded', () => {
 
     typeWriter();
 });
+
